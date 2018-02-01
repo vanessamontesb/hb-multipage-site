@@ -1,48 +1,54 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const path = require('path')
 
-const config = {
+module.exports = {
   entry: './src/main.js',
-  devtool: 'inline-sourceMap',
+  devtool: 'inline-source-map',
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
   },
   module: {
     rules: [
       {
+        enforce: 'pre',
+        test: /\.jsx?$/,
+        use: ['standard-loader'],
+        exclude: /(node_modules|bower_components)/
+      },
+      {
+        test: /\.pug/,
+        use: ['pug-loader']
+      },
+      {
         test: /\.scss$/,
         use: ExtractTextPlugin.extract({
           use: [
-            'css-loader',
-            'sass-loader?sourceMap'
+            {
+              loader: 'css-loader?sourceMap',
+              options: {minimize: true, sourceMap: true}
+            },
+            'sass-loader'
           ]
         })
-      },
-      {
-        enforce: 'pre',
-        test: /\.jsx?$/,
-        loader: 'standard-loader',
-        exclude: /(node_modules|bower_components)/,
-        options: {
-          error: false,
-          snazzy: true
-        }
-      },
-      {
-        test: /\.pug$/,
-        use: [
-          {
-            loader: 'pug-loader'}
-        ]}
-    ]},
+      }
+    ]
+  },
   plugins: [
-    new StyleLintPlugin({}),
+    new HtmlWebpackPlugin({
+      template: 'src/index.html'
+    }),
     new ExtractTextPlugin('styles.css'),
-    new HtmlWebpackPlugin({template: './src/index.html'}),
+    new StyleLintPlugin({
+      configFile: '.stylelintrc',
+      context: 'src',
+      files: '**/*.scss',
+      failOnError: false,
+      quiet: false
+    }),
     new UglifyJsPlugin({
       uglifyOptions: {
         beautify: false,
@@ -53,5 +59,3 @@ const config = {
     })
   ]
 }
-
-module.exports = config
