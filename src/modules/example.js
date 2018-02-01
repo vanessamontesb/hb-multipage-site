@@ -1,6 +1,6 @@
 import template from './example.pug'
 import './example.scss'
-import { data } from '../data/example.json'
+import data from '../data/example.json'
 
 export default class Example {
   constructor (node) {
