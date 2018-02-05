@@ -1,6 +1,6 @@
 import './main.scss'
-import Example from './modules/example.js'
+import Menu from './modules/menu-component/menu.js'
 
 /* eslint-disable */
-const example = new Example(document.querySelector('.container'))
+newmenu = new Menu(document.querySelector('.container'))
 /* eslint-enable */
